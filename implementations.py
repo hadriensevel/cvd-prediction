@@ -2,7 +2,7 @@ import numpy as np
 
 
 def compute_loss(y, tx, w):
-    """Calculate the loss using either MSE or MAE.
+    """Calculate the loss using MSE.
 
     Args:
         y: shape=(N, )
@@ -10,7 +10,7 @@ def compute_loss(y, tx, w):
         w: shape=(2,). The vector of model parameters.
 
     Returns:
-        the value of the loss (a scalar), corresponding to the input parameters w.
+        The value of the loss (a scalar), corresponding to the input parameters w.
     """
 
     e = y - tx @ w
@@ -44,6 +44,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
         <DO-SOMETHING>
     """
+
     data_size = len(y)
 
     if shuffle:
@@ -61,6 +62,20 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 
 
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
+    """Perform gradient descent using MSE.
+
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,2)
+        initial_w: shape=(2, ). The initial vector of model parameters.
+        max_iters: The number of iterations to perform.
+        gamma: The step size.
+
+    Returns:
+        w: shape=(2, ). The computed vector of model parameters.
+        loss: The final loss value.
+    """
+
     w = initial_w
 
     if max_iters == 0:
@@ -78,6 +93,21 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
 
 
 def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
+    """Perform stochastic gradient descent using MSE.
+    The batch size is 1.
+
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,2)
+        initial_w: shape=(2, ). The initial vector of model parameters.
+        max_iters: The number of iterations to perform.
+        gamma: The step size.
+
+    Returns:
+        w: shape=(2, ). The computed vector of model parameters.
+        loss: The final loss value.
+    """
+
     w = initial_w
 
     if max_iters == 0:
@@ -96,6 +126,17 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
 
 
 def least_squares(y, tx):
+    """Calculate the least squares solution.
+
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,2)
+
+    Returns:
+        w: shape=(2, ). The computed vector of model parameters.
+        loss: The final loss value.
+    """
+
     lhs = tx.T.dot(tx)
     rhs = tx.T.dot(y)
     w = np.linalg.solve(lhs, rhs)
@@ -104,6 +145,18 @@ def least_squares(y, tx):
 
 
 def ridge_regression(y, tx, lambda_):
+    """Calculate the least squares solution with L2 regularization.
+
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,2)
+        lambda_: The regularization parameter.
+
+    Returns:
+        w: shape=(2, ). The computed vector of model parameters.
+        loss: The final loss value.
+    """
+
     lhs = tx.T.dot(tx) + 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
     rhs = tx.T.dot(y)
     w = np.linalg.solve(lhs, rhs)
