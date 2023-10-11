@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def compute_loss(y, tx, w):
     """Calculate the loss using either MSE or MAE.
 
@@ -13,7 +14,9 @@ def compute_loss(y, tx, w):
     """
 
     e = y - tx @ w
-    return (e.T @ e) / (2 * y.shape[0])
+    loss = (e.T @ e) / (2 * y.shape[0])
+    return np.squeeze(loss)  # to ensure it returns a scalar
+
 
 def compute_gradient(y, tx, w):
     """Computes the gradient at w.
@@ -29,6 +32,7 @@ def compute_gradient(y, tx, w):
 
     e = y - tx @ w
     return -(tx.T @ e) / y.shape[0]
+
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """
@@ -55,6 +59,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
+
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     w = initial_w
 
@@ -70,6 +75,7 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
         loss = compute_loss(y, tx, w)
 
     return w, loss
+
 
 def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
     w = initial_w
@@ -88,12 +94,14 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
 
     return w, loss
 
+
 def least_squares(y, tx):
     lhs = tx.T.dot(tx)
     rhs = tx.T.dot(y)
     w = np.linalg.solve(lhs, rhs)
     loss = compute_loss(y, tx, w)
     return w, loss
+
 
 def ridge_regression(y, tx, lambda_):
     lhs = tx.T.dot(tx) + 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
@@ -102,8 +110,10 @@ def ridge_regression(y, tx, lambda_):
     loss = compute_loss(y, tx, w)
     return w, loss
 
+
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     pass
+
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     pass
