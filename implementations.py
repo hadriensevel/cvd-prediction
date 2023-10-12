@@ -165,6 +165,15 @@ def ridge_regression(y, tx, lambda_):
 
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    """_summary_
+
+    Args:
+        y (_type_): _description_
+        tx (_type_): _description_
+        initial_w (_type_): _description_
+        max_iters (_type_): _description_
+        gamma (_type_): _description_
+    """
     pass
 
 
