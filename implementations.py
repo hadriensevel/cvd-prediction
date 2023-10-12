@@ -118,7 +118,7 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
             # compute gradient
             grad = compute_gradient(batch_y, batch_tx, w)
             # update w by gradient
-            w = w - gamma * grad
+            w -= gamma * grad
             # compute loss
             loss = compute_loss(y, tx, w)
 
