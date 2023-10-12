@@ -11,6 +11,7 @@ def compute_loss(y, tx, w):
 
     Returns:
         The value of the loss (a scalar), corresponding to the input parameters w.
+        try
     """
 
     e = y - tx @ w
