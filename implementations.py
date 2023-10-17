@@ -2,18 +2,53 @@ import numpy as np
 
 
 
-def standardization (matrix):
-    """Standardize the matrix of data.
+def standardization (tx):
+    """Standardize the matrix tx containing the data.
     
     Args:
-        matrix: shape=(N,D)
+        tx: shape=(N,D)
         
     Returns:
-        standard_matrix: shape=(N,D) matrix with standardized columns data
+        standard_tx: shape=(N,D) matrix with standardized columns data
     
     """
-    standard_matrix=(matrix-np.mean(matrix,0))/np.std(matrix,0)
-    return standard_matrix
+    standard_tx=(tx-np.mean(tx,0))/np.std(tx,0)
+    return standard_tx
+
+
+def nan_to_mean (tx):
+    """Converts the nan in the data with the average of the that parameter
+    
+    Args:
+        tx: shape=(N,D)
+    
+    Returns:
+        adjusted_tx: shape=(N,D) matrix where nan are substituted with averages
+    
+    """
+    mean_columns= np.nanmean(matrix, axis=0)
+    nan_indexes = np.where(np.isnan(tx))
+    adjusted_tx[nan_indexes] = mean_colonne[nan_indexes[:][1]]
+    return adjusted_tx
+
+
+def removing_nan_columns(tx,percentage):
+    """Removes the whole columns where there is a proportion of nan higher than "percentage"
+    
+    Args: 
+        tx: shape=(N,D) containing data
+        percentage: scalar indicating which is the maximum percentage of nan accepted (in each column)
+        
+   Returns:
+       reduced_tx: shape=(N-R,D) containing data, where R columns were removed due to excess of nan 
+    
+    
+    """
+    num_rows=len(tx)
+    nan_per_column=np.sum(np.isnan(tx),axis=0)
+    reduced_tx = np.delete(tx, np.where(percentage_nan>percentage), axis=1)
+    return reduced_tx
+
 
 def compute_loss(y, tx, w):
     """Calculate the loss using MSE.
