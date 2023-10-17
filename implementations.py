@@ -1,6 +1,20 @@
 import numpy as np
 
 
+
+def standardization (matrix):
+    """Standardize the matrix of data.
+    
+    Args:
+        matrix: shape=(N,D)
+        
+    Returns:
+        standard_matrix: shape=(N,D) matrix with standardized columns data
+    
+    """
+    standard_matrix=(matrix-np.mean(matrix,0))/np.std(matrix,0)
+    return standard_matrix
+
 def compute_loss(y, tx, w):
     """Calculate the loss using MSE.
 
