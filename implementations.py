@@ -1,7 +1,5 @@
 import numpy as np
 
-
-
 def standardization (tx):
     """Standardize the matrix tx containing the data.
     
@@ -26,7 +24,7 @@ def nan_to_mean (tx):
         adjusted_tx: shape=(N,D) matrix where nan are substituted with averages
     
     """
-    mean_columns= np.nanmean(matrix, axis=0)
+    mean_columns= np.nanmean(tx, axis=0)
     nan_indexes = np.where(np.isnan(tx))
     adjusted_tx[nan_indexes] = mean_colonne[nan_indexes[:][1]]
     return adjusted_tx
@@ -212,6 +210,9 @@ def ridge_regression(y, tx, lambda_):
     w = np.linalg.solve(lhs, rhs)
     loss = compute_loss(y, tx, w)
     return w, loss
+
+
+
 
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
