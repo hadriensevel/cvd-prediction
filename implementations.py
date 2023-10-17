@@ -26,7 +26,8 @@ def nan_to_mean (tx):
     """
     mean_columns= np.nanmean(tx, axis=0)
     nan_indexes = np.where(np.isnan(tx))
-    adjusted_tx[nan_indexes] = mean_colonne[nan_indexes[:][1]]
+    tx[nan_indexes] = mean_columns[nan_indexes[:][1]]
+    adjusted_tx=tx
     return adjusted_tx
 
 
@@ -44,6 +45,7 @@ def removing_nan_columns(tx,percentage):
     """
     num_rows=len(tx)
     nan_per_column=np.sum(np.isnan(tx),axis=0)
+    percentage_nan=nan_per_column/num_rows
     reduced_tx = np.delete(tx, np.where(percentage_nan>percentage), axis=1)
     return reduced_tx
 
