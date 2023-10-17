@@ -1,15 +1,19 @@
 import numpy as np
 
 def standardization (tx):
-    """Standardize the matrix tx containing the data.
+    """Removes columns that have always the same value
+        and standardize the matrix tx containing the data.
     
     Args:
         tx: shape=(N,D)
         
     Returns:
-        standard_tx: shape=(N,D) matrix with standardized columns data
+        standard_tx: shape=(N-E,D) matrix with standardized columns data, removing the E column with always the same data
     
     """
+    dev_std=np.std(tx,0)
+    null_indexes = np.where(dev_std == 0)[0]
+    tx = np.delete(tx, null_indexes, axis=1)
     standard_tx=(tx-np.mean(tx,0))/np.std(tx,0)
     return standard_tx
 
