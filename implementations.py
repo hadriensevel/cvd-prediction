@@ -9,8 +9,8 @@ def standardization (tx):
         
     Returns:
         standard_tx: shape=(N-E,D) matrix with standardized columns data, removing the E column with always the same data
-    
     """
+
     dev_std=np.std(tx,0)
     null_indexes = np.where(dev_std == 0)[0]
     tx = np.delete(tx, null_indexes, axis=1)
@@ -28,6 +28,7 @@ def nan_to_mean (tx):
         adjusted_tx: shape=(N,D) matrix where nan are substituted with averages
     
     """
+    
     mean_columns= np.nanmean(tx, axis=0)
     nan_indexes = np.where(np.isnan(tx))
     tx[nan_indexes] = mean_columns[nan_indexes[:][1]]
@@ -44,15 +45,15 @@ def removing_nan_columns(tx,percentage):
         
    Returns:
        reduced_tx: shape=(N-R,D) containing data, where R columns were removed due to excess of nan 
-    
-    
     """
+
     num_rows=len(tx)
     nan_per_column=np.sum(np.isnan(tx),axis=0)
     percentage_nan=nan_per_column/num_rows
     reduced_tx = np.delete(tx, np.where(percentage_nan>percentage), axis=1)
     return reduced_tx
 
+# ----------------------------- Linear Regression -----------------------------
 
 def compute_loss(y, tx, w):
     """Calculate the loss using MSE.
@@ -217,9 +218,19 @@ def ridge_regression(y, tx, lambda_):
     loss = compute_loss(y, tx, w)
     return w, loss
 
+# ----------------------------- Logistic Regression -----------------------------
 
+def sigmoid(t):
+    """Apply sigmoid function on t.
 
+    Args:
+        t: scalar or numpy array
 
+    Returns:
+        scalar or numpy array
+    """
+
+    return 1 / (1 + np.exp(-t))
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """_summary_
