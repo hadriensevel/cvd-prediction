@@ -12,15 +12,15 @@ def standardization(tx):
         standard_tx: shape=(N-E,D) matrix with standardized columns data, removing the E column with always the same data
     """
 
-    dev_std = np.std(tx, 0)
+    dev_std = np.std(tx, axis=0)
     null_indexes = np.where(dev_std == 0)[0]
     tx = np.delete(tx, null_indexes, axis=1)
-    standard_tx = (tx - np.mean(tx, 0)) / np.std(tx, 0)
+    standard_tx = (tx - np.mean(tx, axis=0)) / np.std(tx, axis=0)
     return standard_tx
 
 
 def nan_to_mean(tx):
-    """Converts the nan in the data with the average of the that parameter
+    """Converts the nan in the data with the average of the parameter
 
     Args:
         tx: shape=(N,D)
@@ -32,13 +32,13 @@ def nan_to_mean(tx):
 
     mean_columns = np.nanmean(tx, axis=0)
     nan_indexes = np.where(np.isnan(tx))
-    tx[nan_indexes] = mean_columns[nan_indexes[:][1]]
     adjusted_tx = tx
+    adjusted_tx[nan_indexes] = mean_columns[nan_indexes[:][1]]
     return adjusted_tx
 
 
 def removing_nan_columns(tx, percentage):
-    """Removes the whole columns where there is a proportion of nan higher than "percentage"
+    """Removes the columns where there is a proportion of nan higher than given percentage
 
      Args:
          tx: shape=(N,D) containing data
@@ -272,17 +272,67 @@ def sigmoid(t):
     return 1 / (1 + np.exp(-t))
 
 
-def logistic_regression(y, tx, initial_w, max_iters, gamma):
-    """_summary_
+def compute_loss_neg_log(y, tx, w):
+    """Compute the cost by negative log likelihood.
 
     Args:
-        y (_type_): _description_
-        tx (_type_): _description_
-        initial_w (_type_): _description_
-        max_iters (_type_): _description_
-        gamma (_type_): _description_
+        y:  shape=(N, 1)
+        tx: shape=(N, D)
+        w:  shape=(D, 1)
+
+    Returns:
+        a non-negative loss (scalar)
     """
-    pass
+
+    assert y.shape[0] == tx.shape[0]
+    assert tx.shape[1] == w.shape[0]
+
+    return (
+        -np.sum(y * np.log(sigmoid(tx @ w)) + (1 - y) * np.log(1 - sigmoid(tx @ w)))
+        / y.shape[0]
+    )
+
+
+def compute_gradient_neg_log(y, tx, w):
+    """Compute the gradient of loss by negative log likelihood.
+
+    Args:
+        y:  shape=(N, 1)
+        tx: shape=(N, D)
+        w:  shape=(D, 1)
+
+    Returns:
+        a vector of shape (D, 1)
+    """
+
+    return tx.T @ (sigmoid(tx @ w) - y) / y.shape[0]
+
+
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    """Perform logistic regression using gradient descent.
+
+    Args:
+        y: shape=(N, 1)
+        tx: shape=(N, D)
+        initial_w: shape=(D, 1). The initial vector of model parameters.
+        max_iters): The number of iterations to perform.
+        gamma: The step size.
+    """
+
+    w = initial_w
+
+    if max_iters == 0:
+        return w, compute_loss_neg_log(y, tx, w)
+
+    for _ in range(max_iters):
+        # compute gradient
+        grad = compute_gradient_neg_log(y, tx, w)
+        # update w by gradient
+        w = w - gamma * grad
+        # compute loss
+        loss = compute_loss_neg_log(y, tx, w)
+
+    return w, loss
 
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
