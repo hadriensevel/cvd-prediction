@@ -1,59 +1,62 @@
 import numpy as np
 
-def standardization (tx):
+
+def standardization(tx):
     """Removes columns that have always the same value
         and standardize the matrix tx containing the data.
-    
+
     Args:
         tx: shape=(N,D)
-        
+
     Returns:
         standard_tx: shape=(N-E,D) matrix with standardized columns data, removing the E column with always the same data
     """
 
-    dev_std=np.std(tx,0)
+    dev_std = np.std(tx, 0)
     null_indexes = np.where(dev_std == 0)[0]
     tx = np.delete(tx, null_indexes, axis=1)
-    standard_tx=(tx-np.mean(tx,0))/np.std(tx,0)
+    standard_tx = (tx - np.mean(tx, 0)) / np.std(tx, 0)
     return standard_tx
 
 
-def nan_to_mean (tx):
+def nan_to_mean(tx):
     """Converts the nan in the data with the average of the that parameter
-    
+
     Args:
         tx: shape=(N,D)
-    
+
     Returns:
         adjusted_tx: shape=(N,D) matrix where nan are substituted with averages
-    
+
     """
-    
-    mean_columns= np.nanmean(tx, axis=0)
+
+    mean_columns = np.nanmean(tx, axis=0)
     nan_indexes = np.where(np.isnan(tx))
     tx[nan_indexes] = mean_columns[nan_indexes[:][1]]
-    adjusted_tx=tx
+    adjusted_tx = tx
     return adjusted_tx
 
 
-def removing_nan_columns(tx,percentage):
+def removing_nan_columns(tx, percentage):
     """Removes the whole columns where there is a proportion of nan higher than "percentage"
-    
-    Args: 
-        tx: shape=(N,D) containing data
-        percentage: scalar indicating which is the maximum percentage of nan accepted (in each column)
-        
-   Returns:
-       reduced_tx: shape=(N-R,D) containing data, where R columns were removed due to excess of nan 
+
+     Args:
+         tx: shape=(N,D) containing data
+         percentage: scalar indicating which is the maximum percentage of nan accepted (in each column)
+
+    Returns:
+        reduced_tx: shape=(N-R,D) containing data, where R columns were removed due to excess of nan
     """
 
-    num_rows=len(tx)
-    nan_per_column=np.sum(np.isnan(tx),axis=0)
-    percentage_nan=nan_per_column/num_rows
-    reduced_tx = np.delete(tx, np.where(percentage_nan>percentage), axis=1)
+    num_rows = len(tx)
+    nan_per_column = np.sum(np.isnan(tx), axis=0)
+    percentage_nan = nan_per_column / num_rows
+    reduced_tx = np.delete(tx, np.where(percentage_nan > percentage), axis=1)
     return reduced_tx
 
+
 # ----------------------------- Linear Regression -----------------------------
+
 
 def compute_loss(y, tx, w):
     """Calculate the loss using MSE.
@@ -95,25 +98,59 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
     Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
     Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
+
+    Example:
+
+     Number of batches = 9
+
+     Batch size = 7                              Remainder = 3
+     v     v                                         v v
+    |-------|-------|-------|-------|-------|-------|---|
+        0       7       14      21      28      35   max batches = 6
+
+    If shuffle is False, the returned batches are the ones started from the indexes:
+    0, 7, 14, 21, 28, 35, 0, 7, 14
+
+    If shuffle is True, the returned batches start in:
+    7, 28, 14, 35, 14, 0, 21, 28, 7
+
+    To prevent the remainder datapoints from ever being taken into account, each of the shuffled indexes is added a random amount
+    8, 28, 16, 38, 14, 0, 22, 28, 9
+
+    This way batches might overlap, but the returned batches are slightly more representative.
+
+    Disclaimer: To keep this function simple, individual datapoints are not shuffled. For a more random result consider using a batch_size of 1.
+
     Example of use :
     for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
         <DO-SOMETHING>
     """
 
-    data_size = len(y)
+    data_size = len(y)  # Number of data points.
+    batch_size = min(data_size, batch_size)  # Limit the possible size of the batch.
+    max_batches = int(
+        data_size / batch_size
+    )  # The maximum amount of non-overlapping batches that can be extracted from the data.
+    remainder = (
+        data_size - max_batches * batch_size
+    )  # Points that would be excluded if no overlap is allowed.
 
     if shuffle:
-        shuffle_indices = np.random.permutation(np.arange(data_size))
-        shuffled_y = y[shuffle_indices]
-        shuffled_tx = tx[shuffle_indices]
+        # Generate an array of indexes indicating the start of each batch
+        idxs = np.random.randint(max_batches, size=num_batches) * batch_size
+        if remainder != 0:
+            # Add an random offset to the start of each batch to eventually consider the remainder points
+            idxs += np.random.randint(remainder + 1, size=num_batches)
     else:
-        shuffled_y = y
-        shuffled_tx = tx
-    for batch_num in range(num_batches):
-        start_index = batch_num * batch_size
-        end_index = min((batch_num + 1) * batch_size, data_size)
-        if start_index != end_index:
-            yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
+        # If no shuffle is done, the array of indexes is circular.
+        idxs = np.array([i % max_batches for i in range(num_batches)]) * batch_size
+
+    for start in idxs:
+        start_index = start  # The first data point of the batch
+        end_index = (
+            start_index + batch_size
+        )  # The first data point of the following batch
+        yield y[start_index:end_index], tx[start_index:end_index]
 
 
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
@@ -218,7 +255,9 @@ def ridge_regression(y, tx, lambda_):
     loss = compute_loss(y, tx, w)
     return w, loss
 
+
 # ----------------------------- Logistic Regression -----------------------------
+
 
 def sigmoid(t):
     """Apply sigmoid function on t.
@@ -231,6 +270,7 @@ def sigmoid(t):
     """
 
     return 1 / (1 + np.exp(-t))
+
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """_summary_
