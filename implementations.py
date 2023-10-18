@@ -315,8 +315,12 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         y: shape=(N, 1)
         tx: shape=(N, D)
         initial_w: shape=(D, 1). The initial vector of model parameters.
-        max_iters): The number of iterations to perform.
+        max_iters: The number of iterations to perform.
         gamma: The step size.
+
+    Returns:
+        w: shape=(D, 1). The computed vector of model parameters.
+        loss: The final loss value.
     """
 
     w = initial_w
@@ -336,4 +340,19 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+    """Perform regularized logistic regression using gradient descent.
+
+    Args:
+        y: shape=(N, 1)
+        tx: shape=(N, D)
+        lambda_: The regularization parameter.
+        initial_w: shape=(D, 1). The initial vector of model parameters.
+        max_iters: The number of iterations to perform.
+        gamma: The step size.
+
+    Returns:
+        w: shape=(D, 1). The computed vector of model parameters.
+        loss: The final loss value.
+    """
+
     pass
