@@ -355,4 +355,17 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         loss: The final loss value.
     """
 
-    pass
+    w = initial_w
+
+    if max_iters == 0:
+        return w, compute_loss_neg_log(y, tx, w) + lambda_ * np.linalg.norm(w) ** 2
+
+    for _ in range(max_iters):
+        # compute gradient
+        grad = compute_gradient_neg_log(y, tx, w) + 2 * lambda_ * w
+        # update w by gradient
+        w = w - gamma * grad
+        # compute loss
+        loss = compute_loss_neg_log(y, tx, w) + lambda_ * np.linalg.norm(w) ** 2
+
+    return w, loss
