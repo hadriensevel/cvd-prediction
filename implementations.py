@@ -50,7 +50,9 @@ def removing_nan_columns(tx, percentage):
     num_rows = len(tx)
     nan_per_column = np.sum(np.isnan(tx), axis=0)
     percentage_nan = nan_per_column / num_rows
-    index_removed_columns=np.where(percentage_nan > percentage) #to confront with test data
+    index_removed_columns = np.where(
+        percentage_nan > percentage
+    )  # to confront with test data
     reduced_tx = np.delete(tx, np.where(percentage_nan > percentage), axis=1)
     return reduced_tx, index_removed_columns
 
