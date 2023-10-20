@@ -358,7 +358,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     w = initial_w
 
     if max_iters == 0:
-        return w, compute_loss_neg_log(y, tx, w) + lambda_ * np.linalg.norm(w) ** 2
+        return w, compute_loss_neg_log(y, tx, w)
 
     for _ in range(max_iters):
         # compute gradient
@@ -366,6 +366,6 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         # update w by gradient
         w = w - gamma * grad
         # compute loss
-        loss = compute_loss_neg_log(y, tx, w) + lambda_ * np.linalg.norm(w) ** 2
+        loss = compute_loss_neg_log(y, tx, w)
 
     return w, loss
