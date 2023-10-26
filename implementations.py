@@ -293,10 +293,7 @@ def compute_loss_neg_log(y, tx, w):
     epsilon = 1e-8
     pred = np.clip(sigmoid(tx.dot(w)), epsilon, 1 - epsilon)
 
-    return (
-        -np.sum(y * np.log(pred) + (1 - y) * np.log(1 - pred))
-        / y.shape[0]
-    )
+    return -np.sum(y * np.log(pred) + (1 - y) * np.log(1 - pred)) / y.shape[0]
 
 
 def compute_gradient_neg_log(y, tx, w):
@@ -345,7 +342,9 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     return w, loss
 
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, threshold=1e-8):
+def reg_logistic_regression(
+    y, tx, lambda_, initial_w, max_iters, gamma, threshold=1e-8
+):
     """Perform regularized logistic regression using gradient descent.
 
     Args:
@@ -386,4 +385,3 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, thresho
             break
 
     return w, loss
-
