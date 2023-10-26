@@ -271,6 +271,7 @@ def sigmoid(t):
         scalar or numpy array
     """
 
+    t = np.clip(t, -500, 500)
     return 1 / (1 + np.exp(-t))
 
 
@@ -289,8 +290,11 @@ def compute_loss_neg_log(y, tx, w):
     assert y.shape[0] == tx.shape[0]
     assert tx.shape[1] == w.shape[0]
 
+    epsilon = 1e-8
+    pred = np.clip(sigmoid(tx.dot(w)), epsilon, 1 - epsilon)
+
     return (
-        -np.sum(y * np.log(sigmoid(tx @ w)) + (1 - y) * np.log(1 - sigmoid(tx @ w)))
+        -np.sum(y * np.log(pred) + (1 - y) * np.log(1 - pred))
         / y.shape[0]
     )
 
@@ -341,7 +345,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     return w, loss
 
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, threshold=1e-8):
     """Perform regularized logistic regression using gradient descent.
 
     Args:
@@ -351,6 +355,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         initial_w: shape=(D, 1). The initial vector of model parameters.
         max_iters: The number of iterations to perform.
         gamma: The step size.
+        threshold: The stopping criterion threshold.
 
     Returns:
         w: shape=(D, 1). The computed vector of model parameters.
@@ -358,16 +363,27 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """
 
     w = initial_w
+    loss = compute_loss_neg_log(y, tx, w)
 
     if max_iters == 0:
-        return w, compute_loss_neg_log(y, tx, w)
+        return w, loss
 
     for _ in range(max_iters):
+        # Store previous loss
+        prev_loss = loss
+
         # compute gradient
         grad = compute_gradient_neg_log(y, tx, w) + 2 * lambda_ * w
+
         # update w by gradient
         w = w - gamma * grad
+
         # compute loss
         loss = compute_loss_neg_log(y, tx, w)
 
+        # Check stopping criterion
+        if abs(prev_loss - loss) < threshold:
+            break
+
     return w, loss
+
