@@ -12,6 +12,7 @@ The output:
 The software generates a file named 'submission.csv' in the folder 'Data'
 
 
+
 optimal_hyperparameters.ipynb
 
 Description:
@@ -25,3 +26,16 @@ The same folder must contain a folder named 'data', inside this folder there mus
 
 
 
+Implementations.py
+
+Description:
+Contains functions for regression and losses used in 'optimal_hyperparameters.ipynb' and 'run.ipynb' 
+
+
+
+
+Helpers.py
+
+
+Description:
+Contains functions to load the data and to create the output file 
