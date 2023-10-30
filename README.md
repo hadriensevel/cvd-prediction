@@ -1,41 +1,36 @@
+# Cardiovascular Diseases (CVDs) prediction with machine learning
+This project is the Project 1 of **EPFL CS-433 Machine Learning**.
 
-run.ipynb
+**Team name**: The Overfitters   
+**Team members**: Hadrien Sevel, Pietro Pecchini, Matthijs Scheerder
 
-Description:
-The software pre-processes the dataset and use the optimal weights found with 'optimal_weights.ipynb' in order to make optimal predictions, 
+## Files
 
-To run the code:
-The file 'optimal_weights.ipynb' must be in the same folder as 'helpers.py' and 'implementations.py'.
-The same folder must contain a folder named 'data', inside this folder there must be a folder named 'dataset' which contains the files 'x_test.csv', 'x_train.csv' and 'y_train.csv'
+### run.ipynb
+This notebook pre-processes the dataset and use the optimal weights found with 'hyperparameters_tuning.ipynb' in order to make optimal predictions.
 
-The output:
-The software generates a file named 'submission.csv' in the folder 'Data'
+**To run the code:**   
+The notebook must be in the same folder as 'helpers.py' and 'implementations.py'.
+The same folder must contain a folder named 'data', inside this folder there must be a folder named 'dataset' which contains the files 'x_test.csv', 'x_train.csv' and 'y_train.csv'.
 
-
-
-optimal_hyperparameters.ipynb
-
-Description:
-The software pre-processes the dataset and use it to derive optimal weights through a regularized logistic regression, and predict the output through a logistic function.
-It outputs a graph showing F1 SCORE and RMSE for different combinations of (\lambda, \gamma) trough which it is possible to choose the best couple of parameters and use them to make final predictions.
-The software takes about 6 hours to run, so you should run it only if you want to see the distributions of optimal values.
-
-To run the code:
-The file 'optimal_weights.ipynb' must be in the same folder as 'helpers.py' and 'implementations.py'.
-The same folder must contain a folder named 'data', inside this folder there must be a folder named 'dataset' which contains the files 'x_test.csv', 'x_train.csv' and 'y_train.csv'
+**Output:**   
+The software generates a file named 'submission.csv' in the folder 'data'.
 
 
 
-Implementations.py
+### hyperparameters_tuning.ipynb
+This notebook pre-processes the dataset and run a 4-fold cross-validation for multiple values of gamma (step size) and lambda (regularization parameter), our two hyperparameters.  
+It outputs a graph showing the RMSE and F1 score for the different combinations of lambda and gamma trough which it is possible to choose the best couple of parameters and use them to make final predictions. It also save the different data obtained in the tuning folder.   
+*Disclaimer: this takes a few hours to run.*
 
-Description:
-Contains functions for regression and losses used in 'optimal_hyperparameters.ipynb' and 'run.ipynb' 
+**To run the code:**   
+The notebook must be in the same folder as 'helpers.py' and 'implementations.py'.
+The same folder must contain a folder named 'data', inside this folder there must be a folder named 'dataset' which contains the files 'x_test.csv', 'x_train.csv' and 'y_train.csv'. It should also contain a 'tuning' folder to save the data.
 
 
 
+### implementations.py
+Contains the functions for regressions and losses used in 'run.ipynb' and 'hyperparameters_tuning.ipynb'.
 
-Helpers.py
-
-
-Description:
-Contains functions to load the data and to create the output file 
+### helpers.py
+Contains the functions to load the data and create the submission file.
